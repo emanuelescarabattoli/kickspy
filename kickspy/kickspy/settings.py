@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import environ
 import os
+
+
+env = environ.Env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -77,14 +81,10 @@ WSGI_APPLICATION = 'kickspy.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'kickspy',
-        'USER': 'kickspy',
-        'PASSWORD': 'kickspy',
-        'HOST': 'localhost',
-        'PORT': '5000'
-    }
+    "default": env.db(
+        "DATABASE_URL",
+        default="postgres://kickspy:kickspy@localhost:5000/kickspy",
+    )
 }
 
 
