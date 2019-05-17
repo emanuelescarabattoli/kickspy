@@ -1,1 +1,1 @@
-web: python ./kickspy/manage.py runserver
+web: heroku run python kickspy/manage.py runserver
