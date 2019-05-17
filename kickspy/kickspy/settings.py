@@ -131,3 +131,6 @@ ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = ("DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT")
 CORS_ALLOW_CREDENTIALS = True
+
+# static root
+STATIC_ROOT = os.path.join(BASE_DIR, "core/static")
