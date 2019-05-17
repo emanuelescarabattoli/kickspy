@@ -1,0 +1,12 @@
+version: '2.2'
+
+services:
+  db:
+  
+    image: postgres:latest
+    environment:
+    - POSTGRES_DB=kickspy
+    - POSTGRES_USER=kickspy
+    - POSTGRES_PASSWORD=kickspy
+    ports:
+      - "5000:5432"

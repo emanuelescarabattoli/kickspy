@@ -1,0 +1,1 @@
+web: ./kickspy/managy.py runserver
