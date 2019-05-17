@@ -1,1 +1,1 @@
-web: ./kickspy/managy.py runserver
+web: ./kickspy/manage.py runserver
