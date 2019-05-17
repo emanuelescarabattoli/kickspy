@@ -1,1 +1,1 @@
-web: python kickspy/manage.py runserver
+web: python kickspy/manage.py runserver "0.0.0.0:80"
