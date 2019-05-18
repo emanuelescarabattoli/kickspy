@@ -1,1 +1,1 @@
-web: python kickspy/manage.py runserver "0.0.0.0:8000"
+web: gunicorn kickspy.wsgi:application --chdir kickspy
