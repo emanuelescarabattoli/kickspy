@@ -66,6 +66,10 @@
             color: #222222;
         }
 
+        .stats {
+            height: 400px;
+        }
+
     </style>
 
 </head>
@@ -101,9 +105,6 @@
                     <div class="stats">
                         <canvas id="stats"></canvas>
                     </div>
-                    <div class="stats">
-                        <div id="daily"></id>
-                    </div>
                 </div>
             </div>
         </div>
@@ -137,7 +138,9 @@
                     ]
                 },
                 options: {
-                    animation: false
+                    animation: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
                 }
             });
         };
