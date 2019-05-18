@@ -14,7 +14,17 @@ class StatsView(View):
 
     def get(self, request, *args, **kwargs):
         url = Config.objects.filter(key="url").first().value
-        stats = json.dumps(list(Snapshot.objects.filter(url=url).values()))
+        stats = json.dumps(list(Snapshot.objects.filter(url=url).order_by("date_time").values()))
+        return render(request, self.template, {"stats": stats})
+
+
+class DailyView(View):
+
+    template = "daily.html"
+
+    def get(self, request, *args, **kwargs):
+        url = Config.objects.filter(key="url").first().value
+        stats = json.dumps(list(Snapshot.objects.filter(url=url).order_by("date_time").values()))
         return render(request, self.template, {"stats": stats})
 
 
