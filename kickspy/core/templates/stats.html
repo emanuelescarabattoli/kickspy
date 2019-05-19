@@ -3,14 +3,15 @@
 <head lang="en">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link rel="shortcut icon" type="image/x-icon" href="https://tabula.games/wp-content/uploads/2017/08/icon-tabula-blue.png">
+    <link rel="shortcut icon" type="image/x-icon"
+        href="https://tabula.games/wp-content/uploads/2017/08/icon-tabula-blue.png">
     <title>Icaion Campaign Stats</title>
 
     <style>
-
         @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -69,7 +70,6 @@
         .stats {
             height: 400px;
         }
-
     </style>
 
 </head>
@@ -78,7 +78,8 @@
 
     <header>
         <div>
-            <img src="https://images.squarespace-cdn.com/content/5a310de5d0e62885f537c006/1552993093655-JX0JYJP972NVYYES2Z10/?content-type=image%2Fpng" />
+            <img
+                src="https://images.squarespace-cdn.com/content/5a310de5d0e62885f537c006/1552993093655-JX0JYJP972NVYYES2Z10/?content-type=image%2Fpng" />
         </div>
         <div>
             <h4>Campaign Stats</h4>
@@ -115,13 +116,14 @@
 
     <script>
 
-        const stats = {{ stats|safe }};
+        const stats = {{ stats| safe }};
 
         $(() => {
             generateChart();
         })
 
         const generateChart = () => {
+            const data = stats.map((stat) => parseFloat(stat.pledged));
             var ctx = document.getElementById('stats').getContext('2d');
             var chart = new Chart(ctx, {
                 type: 'line',
@@ -129,10 +131,23 @@
                     labels: stats.map(() => ""),
                     datasets: [
                         {
-                            label: 'Backers',
+                            label: 'Pledged',
                             backgroundColor: 'transparent',
                             borderColor: '#00cc00',
-                            data: stats.map((stat) => stat.pledged)
+                            data
+                        },
+                        {
+                            label: 'Linear trend',
+                            backgroundColor: 'transparent',
+                            borderColor: '#cc0000',
+                            data: stats.map((stat, index) => linearTrend(data, index))
+                        }
+                        ,
+                        {
+                            label: 'Square trend',
+                            backgroundColor: 'transparent',
+                            borderColor: '#0000cc',
+                            data: stats.map((stat, index) => squareTrend(data, index))
                         }
                     ]
                 },
@@ -143,6 +158,81 @@
                 }
             });
         };
+
+    </script>
+
+    <script>
+
+        function LineFitter() {
+            this.count = 0;
+            this.sumX = 0;
+            this.sumX2 = 0;
+            this.sumXY = 0;
+            this.sumY = 0;
+        }
+
+        LineFitter.prototype = {
+            'add': function (x, y) {
+                this.count++;
+                this.sumX += x;
+                this.sumX2 += x * x;
+                this.sumXY += x * y;
+                this.sumY += y;
+            },
+            'trend': function (x) {
+                var det = this.count * this.sumX2 - this.sumX * this.sumX;
+                var offset = (this.sumX2 * this.sumY - this.sumX * this.sumXY) / det;
+                var scale = (this.count * this.sumXY - this.sumX * this.sumY) / det;
+                return offset + x * scale;
+            }
+        };
+
+        function linearTrend(data, x) {
+            var fitter = new LineFitter();
+            for (var i = 0; i < data.length; i++) {
+                fitter.add(i, data[i]);
+            }
+            return fitter.trend(x);
+        }
+
+        function SquareFitter() {
+            this.count = 0;
+            this.sumX = 0;
+            this.sumX2 = 0;
+            this.sumX3 = 0;
+            this.sumX4 = 0;
+            this.sumY = 0;
+            this.sumXY = 0;
+            this.sumX2Y = 0;
+        }
+
+        SquareFitter.prototype = {
+            'add': function (x, y) {
+                this.count++;
+                this.sumX += x;
+                this.sumX2 += x * x;
+                this.sumX3 += x * x * x;
+                this.sumX4 += x * x * x * x;
+                this.sumY += y;
+                this.sumXY += x * y;
+                this.sumX2Y += x * x * y;
+            },
+            'trend': function (x) {
+                var det = this.count * this.sumX2 * this.sumX4 - this.count * this.sumX3 * this.sumX3 - this.sumX * this.sumX * this.sumX4 + 2 * this.sumX * this.sumX2 * this.sumX3 - this.sumX2 * this.sumX2 * this.sumX2;
+                var offset = this.sumX * this.sumX2Y * this.sumX3 - this.sumX * this.sumX4 * this.sumXY - this.sumX2 * this.sumX2 * this.sumX2Y + this.sumX2 * this.sumX3 * this.sumXY + this.sumX2 * this.sumX4 * this.sumY - this.sumX3 * this.sumX3 * this.sumY;
+                var scale = -this.count * this.sumX2Y * this.sumX3 + this.count * this.sumX4 * this.sumXY + this.sumX * this.sumX2 * this.sumX2Y - this.sumX * this.sumX4 * this.sumY - this.sumX2 * this.sumX2 * this.sumXY + this.sumX2 * this.sumX3 * this.sumY;
+                var accel = this.sumY * this.sumX * this.sumX3 - this.sumY * this.sumX2 * this.sumX2 - this.sumXY * this.count * this.sumX3 + this.sumXY * this.sumX2 * this.sumX - this.sumX2Y * this.sumX * this.sumX + this.sumX2Y * this.count * this.sumX2;
+                return (offset + x * scale + x * x * accel) / det;
+            }
+        };
+
+        function squareTrend(data, x) {
+            var fitter = new SquareFitter();
+            for (var i = 0; i < data.length; i++) {
+                fitter.add(i, data[i]);
+            }
+            return fitter.trend(x);
+        }
 
     </script>
 </body>

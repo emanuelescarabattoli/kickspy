@@ -31,20 +31,21 @@ def make_fake_snapshots():
     comments_count = 0
     pledged = 0
     for day in range(0, 31):
-        for hour in range(0, 24):
-            for minute in range(0, 60, 10):
-                if day < 10:
-                    number = get_random_number(day) * 10
-                elif day >= 10 and day < 20 :
-                    number = get_random_number(day) * 1
-                else:
-                    number = get_random_number(day) * 20
+        for hour in range(0, 25):
+            for minute in range(0, 61, 7):
+                # if day < 10:
+                #     number = get_random_number(day) * 10
+                # elif day >= 10 and day < 20 :
+                #     number = get_random_number(day) * 1
+                # else:
+                #     number = get_random_number(day) * 20
+                number = 1
                 if hour > 10 and hour < 14:
-                    number *= 400
+                    number = 10000
                 elif hour > 17 and hour < 23:
-                    number *= 0.2
-                if day > 14 and day < 16:
-                    number *= -100
+                    number = 1
+                # if day > 14 and day < 16:
+                #     number *= -100
                 # number = get_random_number(1)
                 backers_count += number
                 comments_count += number
@@ -63,5 +64,5 @@ def make_fake_snapshots():
 
 
 def get_random_number(number):
-    values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 7, 7, 9]
+    values = [0, 0, 0, 0, 0, 0, 11, 11, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 99, 7, 9]
     return values[randint(0, len(values) - 1)] * number
