@@ -128,6 +128,13 @@
         const generateDaily = () => {
             const dataPledged = stats.map((stat) => parseFloat(stat.pledged));
             const squareTrendData = stats.map((stat, index) => ({ id: stat.id, trend: squareTrend(dataPledged, index) }))
+            let maxDistance = 0;
+            stats.map((stat, index) => {
+                const trendData = squareTrendData[index]
+                if (Math.abs(trendData.trend - stat.pledged) > maxDistance) {
+                    maxDistance = trendData.trend
+                }
+            })
             let day = "";
             let hour = "";
             let minute = "";
@@ -182,27 +189,39 @@
 
 
 
-                            let x = trendData.trend;
-                            let y = result.pledged;
-                            let z = trendData.trend - result.pledged;
-
-                            x = 100
-                            y = result.pledged * 100 / trendData.trend
-                            z = x - y
-
+                            let x = maxDistance;
+                            let y = trendData.trend - result.pledged;
+ 
+                            let z = x - y;
+     
+                            data = z * 100 / maxDistance
 
 
-                            data = z / 100;
 
+
+                            data = 1 - (data / 100);
 
 
 
                             html += '<td style="background-color: rgba(200, 0, 0, ' + data + ');"></td>';
                         } else {
-                            const x = trendData.trend;
-                            const y = result.pledged;
-                            const z = y - x;
-                            data = (z * 100 / y / 100).toFixed(2);
+                 
+
+
+                            let x = maxDistance;
+                            let y =  result.pledged - trendData.trend;
+ 
+                            let z = x - y;
+     
+                            data = z * 100 / maxDistance
+
+
+
+
+                            data = 1 - (data / 100);
+
+
+
                             html += '<td style="background-color: rgba(0, 200, 0, ' + data + ');"></td>';
                         }
                     } else {
