@@ -72,7 +72,64 @@
         }
 
         #daily td {
+            padding: 0px;
+            width: 4%;
             height: 50px;
+        }
+
+        div.round-day {
+            margin: 0 0.5rem 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 50%;
+            color: #333333;
+            background-color: #eeeeee;
+            border: solid 1px #dddddd;
+        }
+
+        div.round-hour {
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 50%;
+            color: #333333;
+            background-color: #eeeeee;
+            border: solid 1px #dddddd;
+        }
+
+        #daily tr:first-child td > div {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 100%;
+        }
+
+        #daily tr td:first-child > div {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+        }
+
+        #daily td div.item {
+            height: 100%;
+            border-bottom-width: 2px;
+            border-bottom-style: solid;
+            border-right: dotted 1px #00000044;
+        }
+
+        #daily tr td:last-child div {
+            border-right: none;
         }
     </style>
 
@@ -172,8 +229,34 @@
             table.shift();
             let html = "";
             let global_index = 0;
+            html += "<tr><td></td>";
+            html += "<td><div><div class='round-hour'>00</div></div></td>";
+            html += "<td><div><div class='round-hour'>01</div></div></td>";
+            html += "<td><div><div class='round-hour'>02</div></div></td>";
+            html += "<td><div><div class='round-hour'>03</div></div></td>";
+            html += "<td><div><div class='round-hour'>04</div></div></td>";
+            html += "<td><div><div class='round-hour'>05</div></div></td>";
+            html += "<td><div><div class='round-hour'>06</div></div></td>";
+            html += "<td><div><div class='round-hour'>07</div></div></td>";
+            html += "<td><div><div class='round-hour'>08</div></div></td>";
+            html += "<td><div><div class='round-hour'>09</div></div></td>";
+            html += "<td><div><div class='round-hour'>10</div></div></td>";
+            html += "<td><div><div class='round-hour'>11</div></div></td>";
+            html += "<td><div><div class='round-hour'>12</div></div></td>";
+            html += "<td><div><div class='round-hour'>13</div></div></td>";
+            html += "<td><div><div class='round-hour'>14</div></div></td>";
+            html += "<td><div><div class='round-hour'>15</div></div></td>";
+            html += "<td><div><div class='round-hour'>16</div></div></td>";
+            html += "<td><div><div class='round-hour'>17</div></div></td>";
+            html += "<td><div><div class='round-hour'>18</div></div></td>";
+            html += "<td><div><div class='round-hour'>19</div></div></td>";
+            html += "<td><div><div class='round-hour'>20</div></div></td>";
+            html += "<td><div><div class='round-hour'>21</div></div></td>";
+            html += "<td><div><div class='round-hour'>22</div></div></td>";
+            html += "<td><div><div class='round-hour'>23</div></div></td></tr>";
             table.map((row, row_index) => {
                 html += "<tr>";
+                html += "<td><div><div class='round-day'>" + ("0" + (row_index + 1)).slice(-2) + "</div></div></td>";
                 let index;
                 for (index = 0; index < 24; index++) {
                     let result;
@@ -203,7 +286,7 @@
 
 
 
-                            html += '<td style="border: solid 1px rgba(180, 0, 0, 1); background-color: rgba(200, 0, 0, ' + data + ');"></td>';
+                            html += '<td><div class="item" style="border-bottom-color: rgba(180, 0, 0, 1); background-color: rgba(200, 0, 0, ' + data + ');"></div></td>';
                         } else {
 
 
@@ -222,10 +305,10 @@
 
 
 
-                            html += '<td style="border: solid 1px rgba(0, 180, 0, 1); background-color: rgba(0, 200, 0, ' + data + ');"></td>';
+                            html += '<td><div class="item" style="border-bottom-color: rgba(0, 180, 0, 1); background-color: rgba(0, 200, 0, ' + data + ');"></div></td>';
                         }
                     } else {
-                        html += '<td style="border: solid 1px #dddddd; background-color: #eeeeee"></td>';
+                        html += '<td><div class="item" style="border-bottom-color: #dddddd; background-color: #eeeeee"></div></td>';
                     }
                     global_index++;
                 }
