@@ -1,11 +1,13 @@
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
-from .views import StatsView, SnapshotView, FakeSnapshotsView, DailyView, DiffView, ClearSnapshotsView
+from .views import StatsView, SnapshotView, FakeSnapshotsView, DailyView, DiffView, ClearSnapshotsView, LiveView, LiveJsonView
 
 
 urlpatterns = [
     path("stats", StatsView.as_view(), name="stats"),
+    path("live", LiveView.as_view(), name="live"),
+    path("live-json", LiveJsonView.as_view(), name="live"),
     path("daily", DailyView.as_view(), name="daily"),
     path("diff", DiffView.as_view(), name="daily"),
     path("snapshot", SnapshotView.as_view(), name="snapshot"),

@@ -1,0 +1,331 @@
+<html>
+
+<head lang="en">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="shortcut icon" type="image/x-icon"
+        href="https://tabula.games/wp-content/uploads/2017/08/icon-tabula-blue.png">
+    <title>Icaion Campaign Stats</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,800&display=swap');
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            font-family: "Open Sans"
+        }
+
+        header {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            grid-column-gap: 1rem;
+            background-color: #222222;
+            box-shadow: 0px 0px 5px 0px #000000aa;
+            color: #f0f0f0;
+        }
+
+        header div:last-child {
+            display: flex;
+            align-items: center;
+        }
+
+        header img {
+            width: 100%;
+        }
+
+        header h4 {
+            margin: 0;
+            padding: 0;
+        }
+
+        section {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-column-gap: 1rem;
+        }
+
+        .card {
+            box-shadow: 0px 3px 3px -3px #000000aa;
+        }
+
+        .card+.card {
+            margin-top: 1rem;
+        }
+
+        .card-header {
+            padding: 1rem;
+            background-color: #222222;
+            color: #f0f0f0;
+        }
+
+        .card-body {
+            padding: 1rem;
+            background-color: #ffffff;
+            color: #222222;
+        }
+
+        .card-body p {
+            margin: 0px;
+            padding: 0px;
+            font-size: 2rem;
+        }
+
+        .card-body span {
+            display: block;
+            margin: 0px 0px 0.2rem 0px;
+            padding: 0px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #222222cc;
+        }
+
+        .card-body p:first-child {
+            margin: 0px 0px 1rem 0px;
+            padding: 0px;
+        }
+
+        .stats {
+            height: 210px;
+        }
+
+        .percentage {
+            margin-top: 0.5rem;
+            height: 10px;
+            background-color: #dddddd;
+        }
+
+        #percentage_indicator {
+            height: 100%;
+            width: 0%;
+            background-color: #00cc00;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        #status-live {
+            margin-bottom: 1rem;
+            padding: 0px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: none;
+            color: #dd0000;
+            display: flex;
+            align-items: center;
+        }
+
+        #status-live span {
+            transition: all 0.5s ease-in-out;
+            animation: blink normal 1s infinite ease-in-out;
+            margin: 0.01rem 0.3rem 0 0;
+            display: inline-block;
+            width: 0.8rem;
+            height: 0.8rem;
+            background-color: #bb0000;
+            border-radius: 50%;
+        }
+
+        #status-not-live {
+            margin-bottom: 1rem;
+            padding: 0px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: none;
+            color: #333333;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <img
+                src="https://images.squarespace-cdn.com/content/5a310de5d0e62885f537c006/1552993093655-JX0JYJP972NVYYES2Z10/?content-type=image%2Fpng" />
+        </div>
+        <div>
+            <h4>Campaign Stats</h4>
+        </div>
+    </header>
+
+    <section>
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    Project Status
+                </div>
+                <div class="card-body">
+                    <p id="status-live"><span></span>live</p>
+                    <p id="status-not-live">not live</p>
+                    <span>Pledged</span>
+                    <p id="pledged"></p>
+                    <span>Backers</span>
+                    <p id="backers"></p>
+                    <span>Comments</span>
+                    <p id="comments"></p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    Project Status
+                </div>
+                <div class="card-body">
+                    <span>Founded</span>
+                    <p id="founded"></p>
+                    <div class="percentage">
+                        <div id="percentage_indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    Stats
+                </div>
+                <div class="card-body">
+                    <div class="stats">
+                        <canvas id="chart_pledged"></canvas>
+                    </div>
+                    <div class="stats">
+                        <canvas id="chart_backers"></canvas>
+                    </div>
+                    <div class="stats">
+                        <canvas id="chart_comments"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <script>
+
+        const goal = "{{ goal }}";
+        const url = "/core/live-json";
+
+        var snapshots = [];
+        $(function () {
+            setInterval(doRequest, 800);
+        });
+        function doRequest() {
+            $.ajax({
+                url,
+                success: function (data) {
+                    $("#pledged").text(parseFloat(data.data.project.pledged).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+                    $("#backers").text(parseFloat(data.data.project.backers_count).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+                    $("#comments").text(parseFloat(data.data.project.comments_count).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+                    if (data.data.project.state === "live") {
+                        $("#status-live").show();
+                        $("#status-not-live").hide();
+                    } else {
+                        $("#status-live").hide();
+                        $("#status-not-live").show();
+                    }
+                    snapshots.push(data)
+                    snapshots = snapshots.length === 201 ? snapshots.slice(1) : snapshots;
+                    setupCharts();
+                    setupPercentage()
+                },
+            });
+        }
+        function setupCharts() {
+            var ctx_pledged = document.getElementById('chart_pledged').getContext('2d');
+            var chat_pledged = new Chart(ctx_pledged, {
+                type: 'line',
+                data: {
+                    labels: snapshots.map(snapshot => ""),
+                    datasets: [
+                        {
+                            label: 'Pledged',
+                            backgroundColor: 'transparent',
+                            borderColor: '#00cc00',
+                            data: snapshots.map(snapshot => snapshot.data.project.pledged)
+                        }
+                    ]
+                },
+                options: {
+                    animation: false,
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            var ctx_backers = document.getElementById('chart_backers').getContext('2d');
+            var chat_backers = new Chart(ctx_backers, {
+                type: 'line',
+                data: {
+                    labels: snapshots.map(snapshot => ""),
+                    datasets: [
+                        {
+                            label: 'Backers',
+                            backgroundColor: 'transparent',
+                            borderColor: '#0000cc',
+                            data: snapshots.map(snapshot => snapshot.data.project.backers_count)
+                        }
+                    ]
+                },
+                options: {
+                    animation: false,
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            var ctx_comments = document.getElementById('chart_comments').getContext('2d');
+            var chart_comments = new Chart(ctx_comments, {
+                type: 'line',
+                data: {
+                    labels: snapshots.map(snapshot => ""),
+                    datasets: [
+                        {
+                            label: 'Comments',
+                            backgroundColor: 'transparent',
+                            borderColor: '#cc0000',
+                            data: snapshots.map(snapshot => snapshot.data.project.comments_count)
+                        }
+                    ]
+                },
+                options: {
+                    animation: false,
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function setupPercentage() {
+            const total = goal;
+            const pledged = snapshots[snapshots.length - 1].data.project.pledged;
+            const percentage = parseFloat(pledged * 100 / total).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            $("#founded").text(percentage + " %")
+            $("#percentage_indicator").css("width", percentage < 100 ? percentage : 100 + "%")
+        }
+
+    </script>
+</body>
+
+</html>
