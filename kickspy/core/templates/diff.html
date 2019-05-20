@@ -1,0 +1,402 @@
+<html>
+
+<head lang="en">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="shortcut icon" href="https://tabula.games/wp-content/uploads/2017/08/icon-tabula-blue.png">
+    <title>Icaion Campaign Stats</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            font-family: "Open Sans"
+        }
+
+        header {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            grid-column-gap: 1rem;
+            background-color: #222222;
+            box-shadow: 0px 0px 5px 0px #000000aa;
+            color: #f0f0f0;
+        }
+
+        header div:last-child {
+            display: flex;
+            align-items: center;
+        }
+
+        header img {
+            width: 100%;
+        }
+
+        header h4 {
+            margin: 0;
+            padding: 0;
+        }
+
+        section {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-column-gap: 1rem;
+        }
+
+        .card {
+            box-shadow: 0px 3px 3px -3px #000000aa;
+        }
+
+        .card-header {
+            padding: 1rem;
+            background-color: #222222;
+            color: #f0f0f0;
+        }
+
+        .card-body {
+            padding: 1rem;
+            background-color: #ffffff;
+            color: #222222;
+        }
+
+        #daily {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #daily td {
+            padding: 0px;
+            width: 4%;
+            height: 50px;
+        }
+
+        div.round-day {
+            margin: 0 0.5rem 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 50%;
+            color: #333333;
+            background-color: #eeeeee;
+            border: solid 1px #dddddd;
+        }
+
+        div.round-hour {
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 50%;
+            color: #333333;
+            background-color: #eeeeee;
+            border: solid 1px #dddddd;
+        }
+
+        #daily tr:first-child td>div {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 100%;
+        }
+
+        #daily tr td:first-child>div {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+        }
+
+        #daily td div.item {
+            height: 100%;
+            border-bottom-width: 2px;
+            border-bottom-style: solid;
+            border-right: dotted 1px #00000044;
+        }
+
+        #daily tr td:last-child div {
+            border-right: none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <img
+                src="https://images.squarespace-cdn.com/content/5a310de5d0e62885f537c006/1552993093655-JX0JYJP972NVYYES2Z10/?content-type=image%2Fpng" />
+        </div>
+        <div>
+            <h4>Campaign Stats</h4>
+        </div>
+    </header>
+
+    <section>
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    Project Status
+                </div>
+                <div class="card-body">
+                    some status here...
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    Stats
+                </div>
+                <div class="card-body">
+                    <div class="daily">
+                        <table id="daily"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <script>
+
+        const stats = {{ stats| safe }};
+
+
+        $(() => {
+            generateDaily();
+        })
+
+        const generateDaily = () => {
+            const dataPledged = stats.map((stat) => parseFloat(stat.pledged));
+            const squareTrendData = stats.map((stat, index) => ({ id: stat.id, trend: squareTrend(dataPledged, index) }))
+            let maxDistance = 0;
+            stats.map((stat, index) => {
+                const trendData = squareTrendData[index]
+                if (Math.abs(trendData.trend - stat.pledged) > maxDistance) {
+                    maxDistance = trendData.trend
+                }
+            })
+            let day = "";
+            let hour = "";
+            let minute = "";
+            let prevDay = "";
+            let prevHour = "";
+            let prevMinute = "";
+            let table = [];
+            let row = [];
+            let cell = [];
+            stats.map(stat => {
+                day = stat.date_time.slice(4, 8);
+                hour = stat.date_time.slice(8, 10);
+                minute = stat.date_time.slice(10, 11);
+                if (day !== prevDay) {
+                    table.push(row);
+                    row = [];
+                    prevHour = "";
+                    prevMinute = ""
+                }
+                if (hour !== prevHour && ((minute < 3 && prevMinute >= 3) || (minute >= 3 && prevMinute < 3))) {
+                    row.push(cell)
+                    cell = []
+                }
+                if (minute < 3) {
+                    cell.push({ stat, half: "0" })
+                } else {
+                    cell.push({ stat, half: "1" })
+                }
+                prevDay = day;
+                prevHour = hour;
+                prevMinute = minute;
+            });
+            table.push(row);
+            table.shift();
+            let html = "";
+            let global_index = 0;
+            html += "<tr><td></td>";
+            html += "<td><div><div class='round-hour'>00</div></div></td>";
+            html += "<td><div><div class='round-hour'>01</div></div></td>";
+            html += "<td><div><div class='round-hour'>02</div></div></td>";
+            html += "<td><div><div class='round-hour'>03</div></div></td>";
+            html += "<td><div><div class='round-hour'>04</div></div></td>";
+            html += "<td><div><div class='round-hour'>05</div></div></td>";
+            html += "<td><div><div class='round-hour'>06</div></div></td>";
+            html += "<td><div><div class='round-hour'>07</div></div></td>";
+            html += "<td><div><div class='round-hour'>08</div></div></td>";
+            html += "<td><div><div class='round-hour'>09</div></div></td>";
+            html += "<td><div><div class='round-hour'>10</div></div></td>";
+            html += "<td><div><div class='round-hour'>11</div></div></td>";
+            html += "<td><div><div class='round-hour'>12</div></div></td>";
+            html += "<td><div><div class='round-hour'>13</div></div></td>";
+            html += "<td><div><div class='round-hour'>14</div></div></td>";
+            html += "<td><div><div class='round-hour'>15</div></div></td>";
+            html += "<td><div><div class='round-hour'>16</div></div></td>";
+            html += "<td><div><div class='round-hour'>17</div></div></td>";
+            html += "<td><div><div class='round-hour'>18</div></div></td>";
+            html += "<td><div><div class='round-hour'>19</div></div></td>";
+            html += "<td><div><div class='round-hour'>20</div></div></td>";
+            html += "<td><div><div class='round-hour'>21</div></div></td>";
+            html += "<td><div><div class='round-hour'>22</div></div></td>";
+            html += "<td><div><div class='round-hour'>23</div></div></td></tr>";
+            let prevValue = 0;
+            let nextValue = 0;
+            table.map((row, row_index) => {
+                html += "<tr>";
+                html += "<td><div><div class='round-day'>" + ("0" + (row_index + 1)).slice(-2) + "</div></div></td>";
+                let index;
+                for (index = 0; index < 24; index++) {
+                    let result;
+                    row.map(cell => {
+                        if (cell.length && (parseInt(cell[cell.length - 1].stat.date_time.slice(8, 10))) === index) {
+                            result = cell[cell.length - 1].stat;
+                        }
+                    });
+                    let data = 0;
+                    if (result) {
+                        nextValue = result.pledged;
+                        if (prevValue > nextValue) {
+
+
+
+                            let x = prevValue;
+                            let y = prevValue - nextValue;
+
+                            let z = x - y;
+
+                            data = z * 100 / x
+
+
+
+
+                            data = (data / 100);
+
+
+
+                            html += '<td><div class="item" style="border-bottom-color: rgba(180, 0, 0, 1); background-color: rgba(200, 0, 0, ' + data + ');"></div></td>';
+                        } else {
+
+
+
+                            let x = nextValue;
+                            let y = nextValue - prevValue;
+
+                            let z = x - y;
+
+                            data = z * 100 / x
+
+
+
+
+                            data = (data / 100);
+
+
+
+                            html += '<td><div class="item" style="border-bottom-color: rgba(0, 180, 0, 1); background-color: rgba(0, 200, 0, ' + data + ');"></div></td>';
+                        }
+                    } else {
+                        html += '<td><div class="item" style="border-bottom-color: #dddddd; background-color: #eeeeee"></div></td>';
+                    }
+                    global_index++;
+                    prevValue = nextValue;
+                }
+                html += "</tr>";
+            });
+            $("#daily").html(html);
+        };
+
+    </script>
+
+    <script>
+
+        function LineFitter() {
+            this.count = 0;
+            this.sumX = 0;
+            this.sumX2 = 0;
+            this.sumXY = 0;
+            this.sumY = 0;
+        }
+
+        LineFitter.prototype = {
+            'add': function (x, y) {
+                this.count++;
+                this.sumX += x;
+                this.sumX2 += x * x;
+                this.sumXY += x * y;
+                this.sumY += y;
+            },
+            'trend': function (x) {
+                var det = this.count * this.sumX2 - this.sumX * this.sumX;
+                var offset = (this.sumX2 * this.sumY - this.sumX * this.sumXY) / det;
+                var scale = (this.count * this.sumXY - this.sumX * this.sumY) / det;
+                return offset + x * scale;
+            }
+        };
+
+        function linearTrend(data, x) {
+            var fitter = new LineFitter();
+            for (var i = 0; i < data.length; i++) {
+                fitter.add(i, data[i]);
+            }
+            return fitter.trend(x);
+        }
+
+        function SquareFitter() {
+            this.count = 0;
+            this.sumX = 0;
+            this.sumX2 = 0;
+            this.sumX3 = 0;
+            this.sumX4 = 0;
+            this.sumY = 0;
+            this.sumXY = 0;
+            this.sumX2Y = 0;
+        }
+
+        SquareFitter.prototype = {
+            'add': function (x, y) {
+                this.count++;
+                this.sumX += x;
+                this.sumX2 += x * x;
+                this.sumX3 += x * x * x;
+                this.sumX4 += x * x * x * x;
+                this.sumY += y;
+                this.sumXY += x * y;
+                this.sumX2Y += x * x * y;
+            },
+            'trend': function (x) {
+                var det = this.count * this.sumX2 * this.sumX4 - this.count * this.sumX3 * this.sumX3 - this.sumX * this.sumX * this.sumX4 + 2 * this.sumX * this.sumX2 * this.sumX3 - this.sumX2 * this.sumX2 * this.sumX2;
+                var offset = this.sumX * this.sumX2Y * this.sumX3 - this.sumX * this.sumX4 * this.sumXY - this.sumX2 * this.sumX2 * this.sumX2Y + this.sumX2 * this.sumX3 * this.sumXY + this.sumX2 * this.sumX4 * this.sumY - this.sumX3 * this.sumX3 * this.sumY;
+                var scale = -this.count * this.sumX2Y * this.sumX3 + this.count * this.sumX4 * this.sumXY + this.sumX * this.sumX2 * this.sumX2Y - this.sumX * this.sumX4 * this.sumY - this.sumX2 * this.sumX2 * this.sumXY + this.sumX2 * this.sumX3 * this.sumY;
+                var accel = this.sumY * this.sumX * this.sumX3 - this.sumY * this.sumX2 * this.sumX2 - this.sumXY * this.count * this.sumX3 + this.sumXY * this.sumX2 * this.sumX - this.sumX2Y * this.sumX * this.sumX + this.sumX2Y * this.count * this.sumX2;
+                return (offset + x * scale + x * x * accel) / det;
+            }
+        };
+
+        function squareTrend(data, x) {
+            var fitter = new SquareFitter();
+            for (var i = 0; i < data.length; i++) {
+                fitter.add(i, data[i]);
+            }
+            return fitter.trend(x);
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -19,6 +19,15 @@ class StatsView(LoginRequiredMixin, View):
         return render(request, self.template, {"stats": stats})
 
 
+class DiffView(LoginRequiredMixin, View):
+
+    template = "diff.html"
+
+    def get(self, request, *args, **kwargs):
+        url = Config.objects.filter(key="url").first().value
+        stats = json.dumps(list(Snapshot.objects.filter(url=url).order_by("date_time").values()))
+        return render(request, self.template, {"stats": stats})
+
 class DailyView(LoginRequiredMixin, View):
 
     template = "daily.html"
