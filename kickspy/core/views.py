@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 
-from .utils import take_snapshot, make_fake_snapshots
+from .utils import take_snapshot, make_fake_snapshots, clear_snapshots
 from .models import Snapshot, Config
 
 
@@ -49,4 +49,11 @@ class FakeSnapshotsView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         make_fake_snapshots()
+        return JsonResponse({ "total_snapshots": Snapshot.objects.count() })
+
+
+class ClearSnapshotsView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        clear_snapshots()
         return JsonResponse({ "total_snapshots": Snapshot.objects.count() })

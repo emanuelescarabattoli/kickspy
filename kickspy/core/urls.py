@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
-from .views import StatsView, SnapshotView, FakeSnapshotsView, DailyView, DiffView
+from .views import StatsView, SnapshotView, FakeSnapshotsView, DailyView, DiffView, ClearSnapshotsView
 
 
 urlpatterns = [
@@ -10,4 +10,5 @@ urlpatterns = [
     path("diff", DiffView.as_view(), name="daily"),
     path("snapshot", SnapshotView.as_view(), name="snapshot"),
     path("fake-snapshots", FakeSnapshotsView.as_view(), name="fake_snapshots"),
+    path("clear-snapshots", clear_snapshots.as_view(), name="clear_snapshots"),
 ]

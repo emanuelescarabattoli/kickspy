@@ -2,6 +2,7 @@ import requests
 import datetime
 import json
 
+ from django.db.models import Q
 from random import randint
 
 from .models import Snapshot, Config
@@ -59,6 +60,11 @@ def make_fake_snapshots():
                     comments_for_display_count="",
                 )
                 snapshot.save()
+
+
+def clear_snapshots():
+    url = Config.objects.filter(key="url").first().value
+    Snapshot.objects.filter(~Q(url=url)).delete()
 
 
 def get_random_number(number):
