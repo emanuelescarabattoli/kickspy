@@ -68,6 +68,7 @@
 
         #daily {
             width: 100%;
+            border-collapse: collapse;
         }
 
         #daily td {
@@ -202,7 +203,7 @@
 
 
 
-                            html += '<td style="background-color: rgba(200, 0, 0, ' + data + ');"></td>';
+                            html += '<td style="border: solid 1px rgba(180, 0, 0, 1); background-color: rgba(200, 0, 0, ' + data + ');"></td>';
                         } else {
 
 
@@ -221,10 +222,10 @@
 
 
 
-                            html += '<td style="background-color: rgba(0, 200, 0, ' + data + ');"></td>';
+                            html += '<td style="border: solid 1px rgba(0, 180, 0, 1); background-color: rgba(0, 200, 0, ' + data + ');"></td>';
                         }
                     } else {
-                        html += '<td style="background-color: #eeeeee"></td>';
+                        html += '<td style="border: solid 1px #dddddd; background-color: #eeeeee"></td>';
                     }
                     global_index++;
                 }
