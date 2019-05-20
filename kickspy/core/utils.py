@@ -2,7 +2,7 @@ import requests
 import datetime
 import json
 
- from django.db.models import Q
+from django.db.models import Q
 from random import randint
 
 from .models import Snapshot, Config

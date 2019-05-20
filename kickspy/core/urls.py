@@ -10,5 +10,5 @@ urlpatterns = [
     path("diff", DiffView.as_view(), name="daily"),
     path("snapshot", SnapshotView.as_view(), name="snapshot"),
     path("fake-snapshots", FakeSnapshotsView.as_view(), name="fake_snapshots"),
-    path("clear-snapshots", clear_snapshots.as_view(), name="clear_snapshots"),
+    path("clear-snapshots", ClearSnapshotsView.as_view(), name="clear_snapshots"),
 ]
