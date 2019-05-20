@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
@@ -8,7 +9,7 @@ from .utils import take_snapshot, make_fake_snapshots
 from .models import Snapshot, Config
 
 
-class StatsView(View):
+class StatsView(LoginRequiredMixin, View):
 
     template = "stats.html"
 
@@ -18,7 +19,7 @@ class StatsView(View):
         return render(request, self.template, {"stats": stats})
 
 
-class DailyView(View):
+class DailyView(LoginRequiredMixin, View):
 
     template = "daily.html"
 
@@ -35,7 +36,7 @@ class SnapshotView(View):
         return JsonResponse({ "total_snapshots": Snapshot.objects.count() })
 
 
-class FakeSnapshotsView(View):
+class FakeSnapshotsView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         make_fake_snapshots()

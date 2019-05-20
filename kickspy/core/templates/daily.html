@@ -178,7 +178,7 @@
                 for (index = 0; index < 24; index++) {
                     let result;
                     row.map(cell => {
-                        if (parseInt(cell[cell.length - 1].stat.date_time.slice(8, 10)) === index) {
+                        if (cell.length && (cell[cell.length - 1].stat.date_time.slice(8, 10)) === index) {
                             result = cell[cell.length - 1].stat;
                         }
                     });
@@ -191,9 +191,9 @@
 
                             let x = maxDistance;
                             let y = trendData.trend - result.pledged;
- 
+
                             let z = x - y;
-     
+
                             data = z * 100 / maxDistance
 
 
@@ -205,14 +205,14 @@
 
                             html += '<td style="background-color: rgba(200, 0, 0, ' + data + ');"></td>';
                         } else {
-                 
+
 
 
                             let x = maxDistance;
-                            let y =  result.pledged - trendData.trend;
- 
+                            let y = result.pledged - trendData.trend;
+
                             let z = x - y;
-     
+
                             data = z * 100 / maxDistance
 
 

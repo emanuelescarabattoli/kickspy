@@ -34,17 +34,17 @@ def make_fake_snapshots():
         for hour in range(0, 25):
             for minute in range(0, 61, 7):
                 if day < 10:
-                    number = get_random_number(day) * 20
+                    number = get_random_number(day + 1) * 20
                 elif day >= 10 and day < 20 :
-                    number = get_random_number(day) * 1
+                    number = get_random_number(day + 1) * 1
                 else:
-                    number = get_random_number(day) * 60
+                    number = get_random_number(day + 1) * 60
                 if hour > 10 and hour < 14:
-                    number = get_random_number(day) * 40
+                    number = get_random_number(day + 1) * 40
                 elif hour > 17 and hour < 23:
-                    number = get_random_number(day) * 10
+                    number = get_random_number(day + 1) * 10
                 if day > 14 and day < 16:
-                    number = get_random_number(day) * 20
+                    number = get_random_number(day + 1) * 20
                 backers_count += number
                 comments_count += number
                 pledged += number
