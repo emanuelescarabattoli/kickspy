@@ -170,7 +170,6 @@
             table.push(row);
             table.shift();
             let html = "";
-            console.log(table)
             let global_index = 0;
             table.map((row, row_index) => {
                 html += "<tr>";
@@ -178,7 +177,7 @@
                 for (index = 0; index < 24; index++) {
                     let result;
                     row.map(cell => {
-                        if (cell.length && (cell[cell.length - 1].stat.date_time.slice(8, 10)) === index) {
+                        if (cell.length && (parseInt(cell[cell.length - 1].stat.date_time.slice(8, 10))) === index) {
                             result = cell[cell.length - 1].stat;
                         }
                     });
