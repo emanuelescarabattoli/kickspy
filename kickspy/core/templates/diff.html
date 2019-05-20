@@ -186,12 +186,15 @@
         const generateDaily = () => {
             const dataPledged = stats.map((stat) => parseFloat(stat.pledged));
             const squareTrendData = stats.map((stat, index) => ({ id: stat.id, trend: squareTrend(dataPledged, index) }))
-            let maxDistance = 0;
+            let maxDiff = 0;
+            let maxPrev = 0;
             stats.map((stat, index) => {
-                const trendData = squareTrendData[index]
-                if (Math.abs(trendData.trend - stat.pledged) > maxDistance) {
-                    maxDistance = trendData.trend
+                if (index) {
+                    if (Math.abs(maxPrev - stat.pledged) > maxDiff) {
+                        maxDiff = Math.abs(maxPrev - stat.pledged)
+                    }
                 }
+                maxPrev = stat.pledged
             })
             let day = "";
             let hour = "";
@@ -274,17 +277,17 @@
 
 
 
-                            let x = prevValue;
+
                             let y = prevValue - nextValue;
 
-                            let z = x - y;
-
-                            data = z * 100 / x
 
 
+                            data =  100 * y / maxDiff / 100
 
 
-                            data = (data / 100);
+
+
+
 
 
 
@@ -293,19 +296,14 @@
 
 
 
-                            let x = nextValue;
-                            let y = nextValue - prevValue;
-
-                            let z = x - y;
-
-                            data = z * 100 / x
+                           
+                            let y =  nextValue - prevValue;
 
 
 
+                            data =  100 * y / maxDiff / 100
 
-                            data = (data / 100);
-
-
+                            console.log(data)
 
                             html += '<td><div class="item" style="border-bottom-color: rgba(0, 180, 0, 1); background-color: rgba(0, 200, 0, ' + data + ');"></div></td>';
                         }
