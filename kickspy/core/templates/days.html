@@ -68,7 +68,7 @@
         }
 
         .stats {
-            height: calc(100vh - 12rem);
+            height: 400px;
         }
     </style>
 
@@ -94,9 +94,7 @@
                     Stats
                 </div>
                 <div class="card-body">
-                    <div class="stats">
-                        <canvas id="stats"></canvas>
-                    </div>
+                    <div id="container"></div>
                 </div>
             </div>
         </div>
@@ -114,38 +112,55 @@
         })
 
         const generateChart = () => {
-            const data = stats.map((stat) => parseFloat(stat.pledged));
-            var ctx = document.getElementById('stats').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: stats.map(() => ""),
-                    datasets: [
-                        {
-                            label: 'Pledged',
-                            backgroundColor: 'transparent',
-                            borderColor: '#00cc00',
-                            data
-                        },
-                        {
-                            label: 'Linear trend',
-                            backgroundColor: 'transparent',
-                            borderColor: '#cc0000',
-                            data: stats.map((stat, index) => linearTrend(data, index))
-                        }
-                        ,
-                        {
-                            label: 'Square trend',
-                            backgroundColor: 'transparent',
-                            borderColor: '#0000cc',
-                            data: stats.map((stat, index) => squareTrend(data, index))
-                        }
-                    ]
-                },
-                options: {
-                    animation: false,
-                    responsive: true,
-                    maintainAspectRatio: false,
+            let cell = [];
+            let prevDay = "";
+            stats.map(stat => {
+                if (!prevDay) {
+                    prevDay = stat.date_time;
+                    cell.push(stat)
+                } else {
+                    if (prevDay.slice(0, 8) !== stat.date_time.slice(0, 8)) {
+                        $("#container").append('<div class="stats"><canvas id="stats' + stat.date_time.slice(0, 8) + '"></canvas></div>')
+                        const data = cell.map((stat) => parseFloat(stat.pledged));
+                        var ctx = document.getElementById('stats' + stat.date_time.slice(0, 8)).getContext('2d');
+                        var chart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: cell.map(() => ""),
+                                datasets: [
+                                    {
+                                        label: 'Pledged',
+                                        backgroundColor: 'transparent',
+                                        borderColor: '#00cc00',
+                                        data
+                                    },
+                                    {
+                                        label: 'Linear trend',
+                                        backgroundColor: 'transparent',
+                                        borderColor: '#cc0000',
+                                        data: cell.map((stat, index) => linearTrend(data, index))
+                                    }
+                                    ,
+                                    {
+                                        label: 'Square trend',
+                                        backgroundColor: 'transparent',
+                                        borderColor: '#0000cc',
+                                        data: cell.map((stat, index) => squareTrend(data, index))
+                                    }
+                                ]
+                            },
+                            options: {
+                                animation: false,
+                                responsive: true,
+                                maintainAspectRatio: false,
+                            }
+                        });
+                        cell = [];
+                        cell.push(stat);
+                        prevDay = stat.date_time;
+                    } else {
+                        cell.push(stat)
+                    }
                 }
             });
         };

@@ -20,6 +20,16 @@ class StatsView(LoginRequiredMixin, View):
         return render(request, self.template, {"stats": stats})
 
 
+class DaysView(LoginRequiredMixin, View):
+
+    template = "days.html"
+
+    def get(self, request, *args, **kwargs):
+        url = Config.objects.filter(key="url").first().value
+        stats = json.dumps(list(Snapshot.objects.filter(url=url).order_by("date_time").values()))
+        return render(request, self.template, {"stats": stats})
+
+
 class LiveView(LoginRequiredMixin, View):
 
     template = "live.html"
