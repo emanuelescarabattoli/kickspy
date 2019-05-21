@@ -120,9 +120,9 @@
                     cell.push(stat)
                 } else {
                     if (prevDay.slice(0, 8) !== stat.date_time.slice(0, 8)) {
-                        $("#container").append('<div class="stats"><canvas id="stats' + stat.date_time.slice(0, 8) + '"></canvas></div>')
+                        $("#container").append('<div class="stats"><canvas id="stats' + prevDay.slice(0, 8) + '"></canvas></div>')
                         const data = cell.map((stat) => parseFloat(stat.pledged));
-                        var ctx = document.getElementById('stats' + stat.date_time.slice(0, 8)).getContext('2d');
+                        var ctx = document.getElementById('stats' + prevDay.slice(0, 8)).getContext('2d');
                         var chart = new Chart(ctx, {
                             type: 'line',
                             data: {
