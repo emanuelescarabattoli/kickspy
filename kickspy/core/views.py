@@ -4,9 +4,9 @@ import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
-from .utils import take_snapshot, make_fake_snapshots, clear_snapshots
+from .utils import take_snapshot, make_fake_snapshots, clear_snapshots, get_csv
 from .models import Snapshot, Config
 
 
@@ -65,12 +65,19 @@ class SnapshotView(View):
         return JsonResponse({ "total_snapshots": Snapshot.objects.count() })
 
 
-class LiveJsonView(View):
+class LiveJsonView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         url = Config.objects.filter(key="url").first().value
         data = json.loads(requests.get(url).content)
         return JsonResponse({ "data": data })
+
+
+class CsvView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        data = get_csv()
+        return HttpResponse(data)
 
 
 class FakeSnapshotsView(LoginRequiredMixin, View):

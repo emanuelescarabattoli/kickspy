@@ -70,3 +70,26 @@ def clear_snapshots():
 def get_random_number(number):
     values = [0, 0, 0, 0, 0, 0, 11, 11, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 99, 7, 9]
     return values[randint(0, len(values) - 1)] * number
+
+
+def get_csv():
+    url = Config.objects.filter(key="url").first().value
+    data = Snapshot.objects.filter(url=url)
+    result = "date_time,"
+    result += "state_changed_at,"
+    result += "state,"
+    result += "backers_count,"
+    result += "pledged,"
+    result += "comments_count,"
+    result += "comments_for_display_count"
+    for record in data:
+        result += "\n"
+        result += record.date_time + ","
+        result += record.state_changed_at + ","
+        result += record.state + ","
+        result += record.backers_count + ","
+        result += record.pledged + ","
+        result += record.comments_count + ","
+        result += record.comments_for_display_count
+    return result
+
