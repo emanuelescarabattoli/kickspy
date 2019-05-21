@@ -331,7 +331,7 @@
             const pledged = snapshots[snapshots.length - 1].data.project.pledged;
             const percentage = parseFloat(pledged * 100 / total).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#founded").text(percentage + " %")
-            $("#percentage_indicator").css("width", percentage < 100 ? percentage : 100 + "%")
+            $("#percentage_indicator").css("width", (percentage < 100 ? percentage : 100) + "%")
         }
 
     </script>
