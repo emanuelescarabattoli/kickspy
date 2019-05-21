@@ -163,6 +163,41 @@
                     }
                 }
             });
+            $("#container").append('<div class="stats"><canvas id="stats' + cell[0].date_time.slice(0, 8) + '"></canvas></div>')
+            const data = cell.map((stat) => parseFloat(stat.pledged));
+            var ctx = document.getElementById('stats' + cell[0].date_time.slice(0, 8)).getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: cell.map(() => ""),
+                    datasets: [
+                        {
+                            label: 'Pledged',
+                            backgroundColor: 'transparent',
+                            borderColor: '#00cc00',
+                            data
+                        },
+                        {
+                            label: 'Linear trend',
+                            backgroundColor: 'transparent',
+                            borderColor: '#cc0000',
+                            data: cell.map((stat, index) => linearTrend(data, index))
+                        }
+                        ,
+                        {
+                            label: 'Square trend',
+                            backgroundColor: 'transparent',
+                            borderColor: '#0000cc',
+                            data: cell.map((stat, index) => squareTrend(data, index))
+                        }
+                    ]
+                },
+                options: {
+                    animation: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
         };
 
     </script>
