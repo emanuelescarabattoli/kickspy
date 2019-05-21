@@ -77,7 +77,7 @@ class CsvView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         data = get_csv()
-        return HttpResponse(data)
+        return HttpResponse(data, content_type='text/csv')
 
 
 class FakeSnapshotsView(LoginRequiredMixin, View):
